@@ -91,7 +91,7 @@
 
     #hero {
       position: relative; min-height: 100vh; display: flex; align-items: center;
-      justify-content: center; text-align: center; padding: 120px 5% 80px; z-index: 1; overflow: hidden;
+      justify-content: center; text-align: center; padding: 120px 5% 120px; z-index: 1; overflow: hidden;
     }
     .hero-grid-overlay {
       position: absolute; inset: 0; z-index: 0;
@@ -150,7 +150,7 @@
     .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); transform: translateY(-2px); }
 
     .scroll-indicator {
-      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: 6px;
       color: var(--text-muted); font-size: 0.75rem; letter-spacing: 1px;
       animation: scrollBounce 2s infinite;
@@ -362,14 +362,9 @@
     /* FOOTER */
     footer {
       position: relative; z-index: 1; border-top: 1px solid var(--border);
-      padding: 2rem 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+      padding: 2rem 5%; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem;
     }
-    .footer-copy { font-size: 0.85rem; color: var(--text-muted); }
-    .footer-tagline {
-      font-size: 0.85rem; font-style: italic;
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
+    .footer-copy { font-size: 0.85rem; color: var(--text-muted); text-align: center; }
 
     /* REVEAL */
     @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
@@ -435,7 +430,8 @@
       #contact .contact-wrapper { grid-template-columns: 1fr; }
     }
     @media (max-width: 480px) {
-      .hero-cta { flex-direction: column; align-items: center; }
+      .hero-cta { flex-direction: column; align-items: center; margin-bottom: 2rem; }
+      .scroll-indicator { display: none; }
       #architecture .arch-flow { flex-direction: column; }
       .arch-arrow { transform: rotate(90deg); }
     }
@@ -479,9 +475,9 @@
     <p class="hero-tagline">Building Intelligent Systems with<br><span>Real-Time Artificial Intelligence</span></p>
     <div class="typing-wrapper">&gt; <span id="typing-text"></span><span class="typing-cursor">|</span></div>
     <div class="hero-cta">
-      <a href="#projects" class="btn btn-primary">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        View Projects
+      <a href="https://drive.google.com/file/d/1BZpcugwPUzKdgWhlaJLQDA3d6lY1DwBs/view?usp=sharing" target="_blank" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        View Resume
       </a>
       <a href="#contact" class="btn btn-outline">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
