@@ -681,6 +681,9 @@
             intelligent system leveraging EfficientNet-B7 and Llama 3.2 to automate complex industry standards and
             design audits through local AI inference.
           </p>
+          <p>
+            I completed my <strong class="text-text-primary">B.Tech in Computer Science and Engineering</strong> at <strong class="text-text-primary">Adikavi Nannaya University</strong>, graduating with a CGPA of <strong class="text-text-primary">8.05</strong>.
+          </p>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-6 reveal">
@@ -2474,6 +2477,11 @@
           details: "Always-on, zero-connectivity local microservice voice control helper."
         }
       ],
+      education: {
+        degree: "B.Tech in Computer Science and Engineering",
+        institution: "Adikavi Nannaya University",
+        cgpa: "8.05"
+      },
       contact: {
         email: "rahulnallala2003@gmail.com",
         phone: "+91 7670850075",
@@ -2803,10 +2811,14 @@ ${JSON.stringify(botContext)}`
         'rahul', 'nallala', 'job', 'work', 'experience', 'career', 'role', 'resume', 'cv', 'skill', 'project', 'contact', 
         'email', 'phone', 'linkedin', 'github', 'quest', 'global', 'peopletech', 'vision', 'telemetry', 'gesture', 
         'health', 'fatigue', 'distraction', 'rag', 'retrieval', 'knowledge', 'vector', 'compliance', 'interface iq', 
-        'python', 'c++', 'pytorch', 'keras', 'tensorflow', 'opencv', 'mqtt', 'zmq', 'docker', 'postgresql', 'fastapi'
+        'python', 'c++', 'pytorch', 'keras', 'tensorflow', 'opencv', 'mqtt', 'zmq', 'docker', 'postgresql', 'fastapi',
+        'education', 'qualification', 'college', 'university', 'b.tech', 'degree', 'study', 'cgpa'
       ];
       const isPortfolioQuery = portfolioKeywords.some(kw => q.includes(kw));
 
+      if (q.includes('education') || q.includes('qualification') || q.includes('college') || q.includes('university') || q.includes('b.tech') || q.includes('degree') || q.includes('study') || q.includes('cgpa')) {
+        return `Rahul Nallala completed his **B.Tech in Computer Science and Engineering** from **Adikavi Nannaya University** with a CGPA of **8.05**.\n\n*Note: Running in offline fallback mode.*`;
+      }
       if (q.includes('quest') || q.includes('global') || q.includes('current')) {
         return `Rahul Nallala is currently a **Junior AI/ML Engineer at Quest Global** (having started in January 2026). In this role, he leads low-latency Edge AI development and designs automotive dashboard visual compliance checkers.\n\n*Note: Running in offline fallback mode.*`;
       }
