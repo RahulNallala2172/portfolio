@@ -2532,7 +2532,17 @@
       chatHistory = [
         {
           role: 'system',
-          content: `You are the AI Assistant for Rahul Nallala's developer portfolio. Answer questions based on the metadata. Keep answers concise, technical, and formatted in clean markdown. Metadata: ${JSON.stringify(botContext)}`
+          content: `You are the strict, dedicated AI Assistant for Rahul Nallala's developer portfolio.
+Your ONLY purpose is to answer questions about Rahul Nallala, his skills, experience, projects, and contact info, strictly using the provided portfolio metadata.
+
+CRITICAL GUARDRAILS:
+1. You must ONLY answer questions directly related to Rahul Nallala, his professional resume, and his portfolio.
+2. If the user's query is about general topics, coding problems not specific to Rahul, history, science, math, chemistry formulas (e.g. Benzene, TNT), general programming concepts (e.g. "how to write a loop"), or any topic unrelated to Rahul Nallala, you MUST politely refuse to answer. Use a response like: "I apologize, but I am a dedicated assistant for Rahul Nallala's portfolio. I can only answer questions related to his professional experience, skills, and projects."
+3. Do NOT make up any information. If it is not in the metadata, state that the information is not available in his portfolio.
+4. Keep answers concise, professional, and formatted in clean markdown.
+
+Metadata:
+${JSON.stringify(botContext)}`
         }
       ];
     }
@@ -2645,7 +2655,8 @@
           },
           body: JSON.stringify({
             model: 'llama-3.1-8b-instant',
-            messages: chatHistory
+            messages: chatHistory,
+            temperature: 0.0
           })
         });
 
@@ -2680,7 +2691,20 @@
     }
 
     function getSimulatedResponse(query) {
-      const q = query.toLowerCase();
+      const q = query.toLowerCase().trim();
+
+      // Greetings
+      const greetings = ['hi', 'hello', 'hey', 'help', 'who are you', 'what can you do', 'good morning', 'good afternoon', 'good evening'];
+      const isGreeting = greetings.some(g => q === g || q.startsWith(g + ' ') || q.includes('hello') || q.includes('hey '));
+
+      // Check for portfolio keywords to ensure we only answer resume content
+      const portfolioKeywords = [
+        'rahul', 'nallala', 'job', 'work', 'experience', 'career', 'role', 'resume', 'cv', 'skill', 'project', 'contact', 
+        'email', 'phone', 'linkedin', 'github', 'quest', 'global', 'peopletech', 'vision', 'telemetry', 'gesture', 
+        'health', 'fatigue', 'distraction', 'rag', 'retrieval', 'knowledge', 'vector', 'compliance', 'interface iq', 
+        'python', 'c++', 'pytorch', 'keras', 'tensorflow', 'opencv', 'mqtt', 'zmq', 'docker', 'postgresql', 'fastapi'
+      ];
+      const isPortfolioQuery = portfolioKeywords.some(kw => q.includes(kw));
 
       if (q.includes('quest') || q.includes('global') || q.includes('current')) {
         return `Rahul Nallala is currently a **Junior AI/ML Engineer at Quest Global** (having started in January 2026). In this role, he leads low-latency Edge AI development and designs automotive dashboard visual compliance checkers.\n\n*Note: Running in offline fallback mode.*`;
@@ -2710,7 +2734,11 @@
         return `Rahul built a local **Knowledge Retrieval Agent** using Llama 3, Pinecone vector database, and LangChain. It indexes and searches technical manuals for secure semantic query answering entirely offline.\n\n*Note: Running in offline fallback mode.*`;
       }
 
-      return `I am Rahul's portfolio AI agent. I have retrieved matching vectors about his skills, experience, and projects. Ask me about:\n- **Current Role** (Quest Global)\n- **Core Stacks** (Python, C++, PyTorch, MQTT)\n- **Figma plugin** (Interface IQ Compliance)\n- **Contact info**\n\n*Note: Running in offline fallback mode.*`;
+      if (isGreeting) {
+        return `I am Rahul's portfolio AI agent. I can help you learn more about his skills, experience, and projects. Ask me about:\n- **Current Role** (Quest Global)\n- **Core Stacks** (Python, C++, PyTorch, MQTT)\n- **Featured Project** (Interface IQ Compliance)\n- **Contact info**\n\n*Note: Running in offline fallback mode.*`;
+      }
+
+      return `I apologize, but I am a dedicated assistant for Rahul Nallala's portfolio. I can only answer questions related to his professional experience, skills, and projects.`;
     }
   </script>
 </body>
