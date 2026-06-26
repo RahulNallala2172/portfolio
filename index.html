@@ -2486,8 +2486,47 @@
     let chatHistory = [];
 
     document.addEventListener('DOMContentLoaded', () => {
-      resetHistory();
+      loadChatHistory();
     });
+
+    function saveChatHistory() {
+      try {
+        localStorage.setItem('portfolio_chat_history', JSON.stringify(chatHistory));
+      } catch (e) {
+        console.error("Failed to save chat history to localStorage:", e);
+      }
+    }
+
+    function loadChatHistory() {
+      const saved = localStorage.getItem('portfolio_chat_history');
+      if (saved) {
+        try {
+          chatHistory = JSON.parse(saved);
+          if (chatHistory.length === 0 || chatHistory[0].role !== 'system') {
+            resetHistory();
+            return;
+          }
+          if (chatHistory.length > 1) {
+            const msgBox = document.getElementById('chat-messages');
+            if (msgBox) {
+              msgBox.innerHTML = '';
+              chatHistory.forEach(msg => {
+                if (msg.role === 'user') {
+                  appendMessage('user', msg.content);
+                } else if (msg.role === 'assistant') {
+                  appendMessage('bot', msg.content);
+                }
+              });
+            }
+          }
+        } catch (e) {
+          console.error("Failed to parse saved chat history:", e);
+          resetHistory();
+        }
+      } else {
+        resetHistory();
+      }
+    }
 
     function hideChatTooltip(e) {
       if (e) e.stopPropagation();
@@ -2545,6 +2584,7 @@ Metadata:
 ${JSON.stringify(botContext)}`
         }
       ];
+      saveChatHistory();
     }
 
     function resetChat() {
@@ -2641,6 +2681,7 @@ ${JSON.stringify(botContext)}`
 
       appendMessage('user', text);
       chatHistory.push({ role: 'user', content: text });
+      saveChatHistory();
 
       appendTypingIndicator();
 
@@ -2678,6 +2719,7 @@ ${JSON.stringify(botContext)}`
         removeTypingIndicator();
         appendMessage('bot', reply);
         chatHistory.push({ role: 'assistant', content: reply });
+        saveChatHistory();
       } catch (err) {
         console.warn("Live API call failed, falling back to simulated engine:", err);
         // Fallback to Simulated AI Response
@@ -2686,6 +2728,7 @@ ${JSON.stringify(botContext)}`
           const reply = getSimulatedResponse(text);
           appendMessage('bot', reply);
           chatHistory.push({ role: 'assistant', content: reply });
+          saveChatHistory();
         }, 600 + Math.random() * 400);
       }
     }
@@ -2696,6 +2739,64 @@ ${JSON.stringify(botContext)}`
       // Greetings
       const greetings = ['hi', 'hello', 'hey', 'help', 'who are you', 'what can you do', 'good morning', 'good afternoon', 'good evening'];
       const isGreeting = greetings.some(g => q === g || q.startsWith(g + ' ') || q.includes('hello') || q.includes('hey '));
+
+      // Resolve context from previous messages
+      const assistantMessages = chatHistory.filter(m => m.role === 'assistant');
+      const lastReply = assistantMessages.length > 0 ? assistantMessages[assistantMessages.length - 1].content.toLowerCase() : '';
+      
+      let activeTopic = '';
+      if (lastReply.includes('interface iq') || lastReply.includes('compliance')) {
+        activeTopic = 'interface-iq';
+      } else if (lastReply.includes('quest global')) {
+        activeTopic = 'quest';
+      } else if (lastReply.includes('peopletech')) {
+        activeTopic = 'peopletech';
+      } else if (lastReply.includes('health monitoring') || lastReply.includes('fatigue')) {
+        activeTopic = 'health';
+      } else if (lastReply.includes('vision assistant')) {
+        activeTopic = 'vision';
+      } else if (lastReply.includes('gesture') || lastReply.includes('control')) {
+        activeTopic = 'gesture';
+      } else if (lastReply.includes('knowledge retrieval') || lastReply.includes('rag')) {
+        activeTopic = 'rag';
+      } else if (lastReply.includes('technical stack') || lastReply.includes('languages') || lastReply.includes('skills')) {
+        activeTopic = 'stack';
+      } else if (lastReply.includes('contact') || lastReply.includes('reach')) {
+        activeTopic = 'contact';
+      }
+
+      // Check for follow-up contextual phrases
+      const isFollowUp = ['more', 'explain', 'detail', 'accuracy', 'tech', 'tool', 'stack', 'its', 'about it', 'tell me'].some(word => q.includes(word));
+
+      if (isFollowUp && activeTopic) {
+        if (activeTopic === 'interface-iq') {
+          if (q.includes('accuracy')) {
+            return `Interface IQ Compliance achieves a **98.2% mark detection accuracy** under 10 seconds.\n\n*Note: Running in offline fallback mode.*`;
+          }
+          if (q.includes('tech') || q.includes('tool') || q.includes('stack')) {
+            return `The stack for Interface IQ is: **EfficientNet-B7, Llama 3.2 (Ollama), FastAPI, PostgreSQL, PyTorch, and Docker**.\n\n*Note: Running in offline fallback mode.*`;
+          }
+          return `More details on **Interface IQ Compliance**: It is an automated design audit scaling system for automotive cluster screens. It validates ISO/FMVSS standards under 10 seconds, delivering a **+412% efficiency gain** in manual audits.\n\n*Note: Running in offline fallback mode.*`;
+        }
+        if (activeTopic === 'health') {
+          if (q.includes('accuracy')) {
+            return `The Edge AI Health Monitoring model achieves a **95.8% accuracy benchmark**.\n\n*Note: Running in offline fallback mode.*`;
+          }
+          if (q.includes('tech') || q.includes('tool') || q.includes('stack')) {
+            return `It uses **CNN, TensorFlow, Edge AI, and Keras** running locally at 60fps.\n\n*Note: Running in offline fallback mode.*`;
+          }
+          return `More details on **Edge AI Health Monitoring**: It runs in-vehicle driver fatigue and distraction detection models locally on edge hardware with minimal latency.\n\n*Note: Running in offline fallback mode.*`;
+        }
+        if (activeTopic === 'vision') {
+          return `The **Real-Time Vision Assistant** operates at **sub-12ms processing latency** and displays overlays at **60fps**.\n\n*Note: Running in offline fallback mode.*`;
+        }
+        if (activeTopic === 'quest') {
+          return `At **Quest Global** (Jan 2026 - Present), Rahul works as a Junior AI/ML Engineer leading low-latency Edge AI development and designing automotive dashboard visual compliance checkers.\n\n*Note: Running in offline fallback mode.*`;
+        }
+        if (activeTopic === 'peopletech') {
+          return `At **PeopleTech Group** (Sep 2024 - Jan 2026), Rahul engineered edge computer vision gestures (MediaPipe, <50ms latency) and V2X telemetry state systems.\n\n*Note: Running in offline fallback mode.*`;
+        }
+      }
 
       // Check for portfolio keywords to ensure we only answer resume content
       const portfolioKeywords = [
